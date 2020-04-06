@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>行为验证码demo</title>
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="keywords" content="验证码,demo">
+    <meta name="description" content="行为验证码demo">
+    <link href="./demo/Tmmain.css" rel="stylesheet">
+    <link href="./demo/Tmmanage.css" rel="stylesheet">
+    <link href="./css/style.1.5.7.css" rel="stylesheet">
+    <link href="./css/style_https.1.4.8.css" rel="stylesheet">
+</head>
+
+<body class="bgf2">
+    <section class="flexview">
+        <!--背景logo-->
+        <div class="adminBg">
+            <img class="admin_img" src="./demo/adminbg.png" alt="">
+            <div class="admin_text">
+                <div class="admin_name">
+                    <h2 class="admin_h2">行为验证码demo</h2>
+                </div>
+            </div>
+        </div>
+        <div class="adminform">
+            <form id="form1">
+                <div class="admininput">
+                    <div class="group_input">
+                        <label><img class="accountImg" src="./demo/account.png" alt=""></label>
+                        <input id="username" name="username" type="text" class="text8" placeholder="用户名" validate="{required:true,maxlength:18,minlength:4}" NullMeg="请输入用户名" ErrMeg="请输入合法的用户名">
+                    </div>
+                    <div class="group_input">
+                        <label>
+                        <img class="accountImg" src="./demo/lock.png" alt="">
+                    </label>
+                        <input type="password" name="password" id="password" class="text8" placeholder="密码" validate="{required:true,maxlength:18,minlength:4}" NullMeg="请输入密码" ErrMeg="请输入合法的密码">
+                    </div>
+                    <div id="CodeImg-Container" class="login_textdiv" style="display:none;">
+                        <span class="login_t3"></span>
+                        <input type="text" id="ImgCode" name="ImgCode" class="text10" validate="{maxlength:18,minlength:4}" />
+                        <a href="javascript:RefreshImgCode();"><img class="GetImg" id="NowImgCode" alt="" /></a>
+                    </div>
+                    <div class="group_input" style="margin-top:10px;">
+                        <div id="CodeGeet-Container" style="float:left;margin-bottom:20px;display:none;">
+                            <div id="captcha-embed"></div>
+                            <!-- <div id="captcha-wait">正在加载验证码......</div>-->
+                            <div>
+                                <!-- geetest_detect geetest_success_animate geetest_selected -->
+                                <div class="geetest_holder geetest_wind geetest_fallback  geetest_wait_compute" style="width: 210px;">
+                                    <div class="geetest_form"><input type="hidden" name="geetest_challenge"><input type="hidden" name="geetest_validate"><input type="hidden" name="geetest_seccode"></div>
+                                    <div class="geetest_btn">
+                                        <div class="geetest_radar_btn">
+                                            <div class="geetest_radar">
+                                                <div class="geetest_ring">
+                                                    <div class="geetest_small"></div>
+                                                </div>
+                                                <div class="geetest_sector" style="transform: rotate(93.6346deg);">
+                                                    <div class="geetest_small"></div>
+                                                </div>
+                                                <div class="geetest_cross">
+                                                    <div class="geetest_h"></div>
+                                                    <div class="geetest_v"></div>
+                                                </div>
+                                                <div class="geetest_dot"></div>
+                                                <div class="geetest_scan">
+                                                    <div class="geetest_h"></div>
+                                                </div>
+                                                <div class="geetest_status">
+                                                    <div class="geetest_bg"></div>
+                                                    <div class="geetest_hook"></div>
+                                                </div>
+                                            </div>
+                                            <div class="geetest_ie_radar"></div>
+                                            <div class="geetest_radar_tip" tabindex="0" aria-label="点击按钮进行验证" style="outline-width: 0px;"><span class="geetest_radar_tip_content">点击按钮进行验证</span><span class="geetest_reset_tip_content">请点击重试</span><span class="geetest_radar_error_code"></span></div>
+
+                                        </div>
+                                        <div class="geetest_ghost_success ">
+                                            <div class="geetest_success_btn" style="width: 100%;">
+                                                <div class="geetest_success_box">
+                                                    <div class="geetest_success_show">
+                                                        <div class="geetest_success_pie"></div>
+                                                        <div class="geetest_success_filter"></div>
+                                                        <div class="geetest_success_mask"></div>
+                                                    </div>
+                                                    <div class="geetest_success_correct">
+                                                        <div class="geetest_success_icon"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="geetest_success_radar_tip"><span class="geetest_success_radar_tip_content">验证成功</span><span class="geetest_success_radar_tip_timeinfo"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div id="captcha-error" class="error" style="width: 100%; float: left;color: #ff0000;display:none">拖动上方滑块完成拼图</div>
+                        </div>
+
+                    </div>
+                </div>
+                <a class="btn8" href="javascript:funLogin()">登录</a>
+            </form>
+        </div>
+    </section>
+
+
+    <script src="./js/jquery-1.10.2.min.js"></script>
+    <script src="./js/gt.js"></script>
+    <script type="text/javascript">
+        var CodeKey = "";
+        var validate = null;
+        var _captchaObj = null;
+        $(function() {
+            InitValCode();
+            $(".geetest_item ").bind("click", function() {
+                var select_index = $(".geetest_window .geetest_item").index(this);
+                alert(select_index);
+                $(this).addClass("geetest_selected");
+            });
+        })
+
+        function funLogin() {
+            if (_captchaObj) {
+                validate = _captchaObj.getValidate();
+                if (!validate) {
+                    $("#captcha-error").show();
+                } else {
+                    $("#captcha-error").hide();
+                }
+            }
+            if (validate) {
+                $.tmAjax({
+                    url: '/api/am/login/login',
+                    data: $('#form1').serialize(),
+                    type: "Post",
+                    success: function(data) {
+                        if (!$.APISuccess(data)) {
+                            $.msgTip(data.Message);
+                            RefreshCode(data.Message);
+                        } else {
+                            var _token = data.Data;
+                            setToken(_token.token);
+                            var originurl = location.origin + "/";
+                            var jumpurl = document.referrer;
+                            if (jumpurl == "") {
+                                window.location.href = "/am/home/index";
+                            } else if (jumpurl.indexOf("/a/") > 0 || jumpurl.indexOf("/am/") > 0 || jumpurl.indexOf("/login/") > 0 || jumpurl.indexOf("register") > 0 || jumpurl.indexOf("logout") > 0 || originurl == jumpurl) {
+                                window.top.location.href = "/am/home/index";
+                            } else {
+                                window.location.href = jumpurl;
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        //刷新验证码
+        function RefreshImgCode() {
+            $("#NowImgCode").attr("src", "/a/login/GetImgCode?CodeKey=" + CodeKey + "&t=" + new Date().getTime());
+        }
+        //初始化验证码
+        function InitValCode() {
+            $("#CodeGeet-Container").show();
+            var data = {
+                "success": "1",
+                "gt": "c1dedc5585a84a57e805cf788ff52a8d",
+                "challenge": "bded950c4006cce4cebd70de159f41e6",
+                "new_captcha": true
+            };
+            // var data = {
+            //     "success": 0,
+            //     "gt": "123456",
+            //     "challenge": "c74d97b01eae257e44aa9d5bade97bafb5",
+            //     "new_captcha": true
+            // }
+            // InitGeetestFun(data)
+        }
+        //加载行为验证码
+        function InitGeetestFun(data) {
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                product: "embed",
+                // offline: !data.success,
+                new_captcha: data.new_captcha,
+                width: "210px"
+            }, function(captchaObj) {
+                _captchaObj = captchaObj;
+                $("#captcha-embed").html("");
+                captchaObj.appendTo("#captcha-embed");
+                captchaObj.onReady(function() {
+                    $("#captcha-wait").hide();
+                });
+                captchaObj.onSuccess(function() {
+                    $("#captcha-error").hide();
+                });
+            });
+        }
+        //刷新验证码
+        function RefreshCode(msg) {
+            if (msg.indexOf("过期") > 0) {
+                InitValCode();
+            } else {
+                _captchaObj.reset();
+            }
+        }
+    </script>
+    <div class="geetest_fullpage_click geetest_float geetest_wind geetest_click" style="left: 605px; top: 912px; display: block; opacity: 1;">
+        <div class="geetest_fullpage_ghost"></div>
+        <div class="geetest_fullpage_click_wrap">
+            <div class="geetest_fullpage_click_box" style="width: 348px; top: -198px;">
+                <div class="geetest_holder geetest_silver" style="display: block; opacity: 1;">
+                    <div class="geetest_widget">
+                        <div class="geetest_head">
+                            <div class="geetest_tips">
+                                <div class="geetest_tip_content">请选中下图中所有的：</div>
+                                <div class="geetest_tip_img" aria-hidden="true" style="display: block;background-image: url(&quot;./images/demo.png&quot;);"></div>
+                            </div>
+                            <div class="geetest_atips">
+                                <div class="geetest_atip_content"></div>
+                                <div class="geetest_tip_text">
+                                    <div class="geetest_word1"><span class="">1</span></div>
+                                    <div class="geetest_word2"><span class="">2</span></div>
+                                    <div class="geetest_word3"><span class="">3</span></div>
+                                    <div class="geetest_word4"><span class="">4</span></div>
+                                    <div class="geetest_word5"><span class="">5</span></div>
+                                    <div class="geetest_word6"><span class="">6</span></div>
+                                </div>
+                            </div>
+                            <div class="geetest_tip_space"></div>
+                        </div>
+                        <div class="geetest_table_box">
+                            <div class="geetest_window">
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: 0%; top: 0%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: -100%; top: 0%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: -200%; top: 0%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: 0%; top: -100%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: -100%; top: -100%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: -200%; top: -100%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: 0%; top: -200%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: -100%; top: -200%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                                <div class="geetest_item" style="width: 31%; padding-bottom: 31%;">
+                                    <div class="geetest_item_wrap"><img class="geetest_item_img" src="./images/demo.png" style="left: -200%; top: -200%; width: 300%; height: 337.2%;"></div>
+                                    <div class="geetest_item_ghost"></div>
+                                    <div class="geetest_item_icon"></div>
+                                </div>
+                            </div>
+                            <div class="geetest_result_tip"></div>
+                        </div>
+                        <div class="geetest_panel">
+                            <div class="geetest_small" tabindex="-1" style="outline: none; font-size: 12px;">
+                                <a class="geetest_close" href="javascript:;" tabindex="-1">
+                                    <div class="geetest_close_tip">关闭验证</div>
+                                </a>
+                                <a class="geetest_refresh" href="javascript:;" tabindex="-1">
+                                    <div class="geetest_refresh_tip">刷新验证</div>
+                                </a>
+                                <a class="geetest_voice">
+                                    <div class="geetest_voice_tip"></div>
+                                </a>
+                            </div>
+                            <a class="geetest_commit" href="javascript:;">
+                                <div class="geetest_commit_tip">确认</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="geetest_fullpage_pointer" style="display: block;">
+                <div class="geetest_fullpage_pointer_out"></div>
+                <div class="geetest_fullpage_pointer_in"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
