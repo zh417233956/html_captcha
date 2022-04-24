@@ -45,7 +45,7 @@ namespace VerificationCode
         //图片规格列表 默认300*300
         private string[] imgspecList = { "300*300", "300*200", "200*100" };
         //允许误差 单位像素
-        private const int _deviationPx = 2;
+        private const int _deviationPx = 10;
         //是否跨域访问 在将项目做成第三方使用时可用跨域解决方案 所有的session替换成可共用的变量(Redis)
         private Boolean _isCallback = false;
         //最大错误次数

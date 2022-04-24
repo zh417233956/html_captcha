@@ -228,13 +228,14 @@
                 },
                 success: function (result) {
                     if (result['state'] === 0) {
-                        //抖动效果
-                        for (var i = 1; 4 >= i; i++) {
-                            $xy_img.animate({ left: _x - (40 - 10 * i) }, 50);
-                            $xy_img.animate({ left: _x + 2 * (40 - 10 * i) }, 50, function () {
-                                $xy_img.css({ 'left': result['data'] });
-                            });
-                        }
+                        ////抖动效果
+                        //for (var i = 1; 4 >= i; i++) {
+                        //    $xy_img.animate({ left: _x - (40 - 10 * i) }, 50);
+                        //    $xy_img.animate({ left: _x + 2 * (40 - 10 * i) }, 50, function () {
+                        //        $xy_img.css({ 'left': result['data'] });
+                        //    });
+                        //}
+                        $xy_img.css({ 'left': result['data'] });
                         handler.css({ 'left': maxWidth });
                         drag_bg.css({ 'width': maxWidth });
                         $xy_img.removeClass('xy_img_bord');
@@ -245,6 +246,13 @@
                             __successCallBack();
                         dragOk();
                     } else {
+                        //抖动效果
+                        for (var i = 1; 4 >= i; i++) {
+                            $xy_img.animate({ left: _x - (10 - 2 * i) }, 50);
+                            $xy_img.animate({ left: _x + 2 * (10 - 2 * i) }, 50, function () {
+                                $xy_img.css({ 'left': result['data'] });
+                            });
+                        }
                         $(".refesh_bg").show(300);
                         $xy_img.animate({ 'left': 0 }, 300);
                         handler.animate({ 'left': 0 }, 300);
